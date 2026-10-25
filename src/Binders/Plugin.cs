@@ -15,12 +15,12 @@ namespace Binders
     /// shins against her thighs, in leather sleeves, and keeps her crawling on elbows and knees until she struggles free (F).
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
-    [BepInDependency(Hub.Guid, BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency(Hub.Guid, "0.3.0")] // OnSave / OnLoad / OnNewGame
     public sealed class Plugin : BasePlugin
     {
         public const string PluginGuid = "com.local.binders";
         public const string PluginName = "Binders";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.1.1";
         private const string ModelResource = "Binders.assets.binders.bnd";
         internal const string TextureResource = "Binders.assets.binders_color.png";
 
@@ -70,7 +70,6 @@ namespace Binders
                 Logger.LogError("Binders model could not be loaded, the mod is disabled: " + e.Message);
                 return;
             }
-            Patches.Apply(new HarmonyLib.Harmony(PluginGuid));
             ClassInjector.RegisterTypeInIl2Cpp<BinderController>();
             AddComponent<BinderController>();
             Entry = new Restraint
@@ -79,6 +78,9 @@ namespace Binders
                 RingValue = BinderController.RingItemValue,
                 Label = () => RingLabel.Value,
                 ShortcutSaveKey = Patches.SaveKeyShortcuts,
+                OnSave = Patches.Save,
+                OnLoad = Patches.Load,
+                OnNewGame = () => BinderController.Instance?.OnNewGame(),
                 Holds = BodyParts.Arms | BodyParts.Legs,
                 IsWorn = () => BinderController.Instance != null && BinderController.Instance.Machine.Worn,
                 // Crawling only (the controller keeps her crouched), nothing that needs her hands, no pose skills, no peeing.

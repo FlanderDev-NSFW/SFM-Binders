@@ -4,7 +4,7 @@
   <PropertyGroup>
     <AssemblyName>Binders</AssemblyName>
     <RootNamespace>Binders</RootNamespace>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Description>Binders - arm and leg binders that make her crawl on elbows and knees (SecretFlasherManaka, BepInEx IL2CPP)</Description>
   </PropertyGroup>
 

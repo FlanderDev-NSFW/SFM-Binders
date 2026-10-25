@@ -30,7 +30,6 @@ namespace Binders
         internal readonly LockMachine Machine = new LockMachine();
         public static string Status = "off";
 
-        private IntPtr _gameData;
         private static int _failures;
 
         public BinderController(IntPtr pointer) : base(pointer) { }
@@ -51,7 +50,6 @@ namespace Binders
         [HideFromIl2Cpp]
         private void Tick()
         {
-            TrackSaveIdentity();
             if (PlayerController.Instance == null || GameState.GameStateData == null) return;
             Machine.AttemptSeconds = Plugin.AttemptSeconds.Value; // live: config edits apply without a restart
             Machine.BaseChance = Plugin.SuccessChance.Value;
@@ -139,17 +137,12 @@ namespace Binders
         {
             Release();
             if (locked) Machine.Restore(true, chance);
-            _gameData = GameState.GameStateData == null ? IntPtr.Zero : GameState.GameStateData.Pointer;
         }
 
-        /// <summary>A new game or the title screen replaces the game data without a load: off.</summary>
+        /// <summary>A new game or the title screen replaces the game data without a load (RestraintHub's OnNewGame): off.</summary>
         [HideFromIl2Cpp]
-        private void TrackSaveIdentity()
+        internal void OnNewGame()
         {
-            var data = GameState.GameStateData;
-            IntPtr ptr = data == null ? IntPtr.Zero : data.Pointer;
-            if (ptr == _gameData) return;
-            _gameData = ptr;
             if (Machine.Worn) Release();
         }
 
