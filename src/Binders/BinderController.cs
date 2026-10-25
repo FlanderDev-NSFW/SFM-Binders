@@ -308,7 +308,7 @@ namespace Binders
         [HideFromIl2Cpp]
         private void OnPreCull(Camera cam)
         {
-            try { AimDebugCamera(cam); }
+            try { DebugCamera.Aim(cam, DebugView); }
             catch (Exception e) { Fail("debug camera", e); }
             if (_placedFrame == Time.frameCount) return;
             _placedFrame = Time.frameCount;
@@ -332,53 +332,14 @@ namespace Binders
 
         // --- diagnostics ------------------------------------------------------------------------------------------------------
 
-        /// <summary>
-        /// Diagnostics (bridge: <c>game set Binders.BinderController::DebugView 'right 1.2'</c>): the main camera looks at her from
-        /// a fixed side - right, left, front, back or top - at the distance given (m; a third word "feet" aims at her ankles), set just before it renders, so screenshots
-        /// are not limited by the game's camera (which keeps close to her and stops at walls). Empty = off.
-        /// </summary>
+        /// <summary>Diagnostics (bridge: <c>game set Binders.BinderController::DebugView 'right 1.2'</c>): the main camera looks at
+        /// her from a side at the distance given (m; a third word "feet" aims at her ankles) - SfmKit <see cref="DebugCamera"/>.
+        /// Empty = off.</summary>
         public static string DebugView = "";
 
         /// <summary>Diagnostics (bridge: <c>game set Binders.BinderController::DebugGhost true</c>): the body bake the sleeves are
         /// fitted to, drawn as a green mesh where it was measured (updated with every fit), to compare with her drawn body.</summary>
         public static bool DebugGhost;
-        private static GameObject _debugLight; // a light from the camera, for views outside lit rooms
-
-        [HideFromIl2Cpp]
-        private static void AimDebugCamera(Camera cam)
-        {
-            if (cam != Camera.main) return;
-            if (string.IsNullOrEmpty(DebugView))
-            {
-                if (_debugLight != null) { UnityEngine.Object.Destroy(_debugLight); _debugLight = null; }
-                return;
-            }
-            var player = PlayerController.Instance;
-            var anim = player == null || player.Pca == null ? null : player.Pca.Animator;
-            if (anim == null) return;
-            Transform root = player.transform;
-            string[] p = DebugView.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            float dist = p.Length > 1 && float.TryParse(p[1], NumberStyles.Float, CultureInfo.InvariantCulture, out float d) ? d : 1.2f;
-            Vector3 dir = p[0] switch
-            {
-                "left" => -root.right, "front" => root.forward, "back" => -root.forward, "top" => root.up, _ => root.right,
-            };
-            // Her middle: between the hips and the neck, a little over the floor; "... feet": her ankles.
-            Vector3 target = p.Length > 2 && p[2] == "feet"
-                ? (anim.GetBoneTransform(HumanBodyBones.LeftFoot).position + anim.GetBoneTransform(HumanBodyBones.RightFoot).position) / 2f
-                : (anim.GetBoneTransform(HumanBodyBones.Hips).position + anim.GetBoneTransform(HumanBodyBones.Neck).position) / 2f;
-            Vector3 pos = target + dir * dist + (p[0] == "top" ? Vector3.zero : root.up * 0.1f);
-            cam.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(target - pos, p[0] == "top" ? root.forward : root.up));
-            if (_debugLight == null)
-            {
-                _debugLight = new GameObject("Binders.DebugLight");
-                var light = _debugLight.AddComponent<Light>();
-                light.type = LightType.Directional;
-                light.intensity = 1.1f;
-            }
-            // From over the camera's shoulder, a little from above.
-            _debugLight.transform.rotation = Quaternion.LookRotation(target - pos - root.up * 0.5f * dist, root.up);
-        }
 
         private static string _probeAnim = "", _probeLate = "", _probeDrawn = "";
 
