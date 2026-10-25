@@ -334,7 +334,7 @@ namespace Binders
 
         /// <summary>
         /// Diagnostics (bridge: <c>game set Binders.BinderController::DebugView 'right 1.2'</c>): the main camera looks at her from
-        /// a fixed side - right, left, front, back or top - at the distance given (m), set just before it renders, so screenshots
+        /// a fixed side - right, left, front, back or top - at the distance given (m; a third word "feet" aims at her ankles), set just before it renders, so screenshots
         /// are not limited by the game's camera (which keeps close to her and stops at walls). Empty = off.
         /// </summary>
         public static string DebugView = "";
@@ -363,8 +363,10 @@ namespace Binders
             {
                 "left" => -root.right, "front" => root.forward, "back" => -root.forward, "top" => root.up, _ => root.right,
             };
-            // Her middle: between the hips and the neck, a little over the floor.
-            Vector3 target = (anim.GetBoneTransform(HumanBodyBones.Hips).position + anim.GetBoneTransform(HumanBodyBones.Neck).position) / 2f;
+            // Her middle: between the hips and the neck, a little over the floor; "... feet": her ankles.
+            Vector3 target = p.Length > 2 && p[2] == "feet"
+                ? (anim.GetBoneTransform(HumanBodyBones.LeftFoot).position + anim.GetBoneTransform(HumanBodyBones.RightFoot).position) / 2f
+                : (anim.GetBoneTransform(HumanBodyBones.Hips).position + anim.GetBoneTransform(HumanBodyBones.Neck).position) / 2f;
             Vector3 pos = target + dir * dist + (p[0] == "top" ? Vector3.zero : root.up * 0.1f);
             cam.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(target - pos, p[0] == "top" ? root.forward : root.up));
             if (_debugLight == null)

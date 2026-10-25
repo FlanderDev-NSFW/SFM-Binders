@@ -73,7 +73,7 @@ folded segment, winding flipped for the handedness) and the PNG decoded with `Im
 Diagnostics: `game get Binders.BinderController::Status` (knee spread, hips drop, chest tilt, elbow / knee heights, sleeve
 scales), `game call Binders.BinderController Probe` (her bones as animated, posed and drawn, cm, logged), `LockHere`, `Release`,
 `game set Binders.BinderController::DebugView 'right 0.6'` (the main camera at a fixed side of her - right, left, front, back,
-top - with its own light, for screenshots where the game's camera cannot go; `''` off). Outside the flat's walls (Apart,
+top - with its own light, for screenshots where the game's camera cannot go; `'front 0.4 feet'` aims at her ankles; `''` off). Outside the flat's walls (Apart,
 teleport `0,6.2`) nothing blocks the view. `game set Binders.BinderController::DebugGhost true`: the body bake the sleeves
 are fitted to, drawn over her (white where it lies outside her drawn body; hide `Selestia_body` to see it alone).
 `game get Binders.BinderController::FitStatus`: points per sleeve, cup depth, opening and middle ring, the longest fit step.
