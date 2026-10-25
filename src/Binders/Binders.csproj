@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="$(RepoRoot)build\SfmMod.props" />
+
+  <PropertyGroup>
+    <AssemblyName>Binders</AssemblyName>
+    <RootNamespace>Binders</RootNamespace>
+    <Version>0.1.0</Version>
+    <Description>Binders - arm and leg binders that make her crawl on elbows and knees (SecretFlasherManaka, BepInEx IL2CPP)</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RestraintHub\RestraintHub.csproj" Private="false" />
+    <!-- ImageConversion.LoadImage: the sleeves' colour map is an embedded PNG. -->
+    <Reference Include="UnityEngine.ImageConversionModule"><HintPath>$(SfmInterop)\UnityEngine.ImageConversionModule.dll</HintPath><Private>false</Private></Reference>
+    <EmbeddedResource Include="assets\binders.bnd" LogicalName="Binders.assets.binders.bnd" />
+    <EmbeddedResource Include="assets\binders_color.png" LogicalName="Binders.assets.binders_color.png" />
+  </ItemGroup>
+
+  <Import Project="$(RepoRoot)build\SfmKit.props" />
+  <Import Project="$(RepoRoot)build\SfmMod.targets" />
+</Project>
