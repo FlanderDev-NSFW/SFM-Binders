@@ -22,7 +22,7 @@ namespace Binders
     /// </summary>
     public sealed class BinderController : MonoBehaviour
     {
-        /// <summary>RingItemType value of the entry (registry in mods/RestraintHub/README.md).</summary>
+        /// <summary>RingItemType value of the entry (registry in docs/mods/RestraintHub.md).</summary>
         public const int RingItemValue = 9400;
 
         internal static BinderController Instance;

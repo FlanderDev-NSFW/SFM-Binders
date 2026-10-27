@@ -15,12 +15,12 @@ namespace Binders
     /// shins against her thighs, in leather sleeves, and keeps her crawling on elbows and knees until she struggles free (F).
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
-    [BepInDependency(Hub.Guid, "0.3.0")] // OnSave / OnLoad / OnNewGame
+    [BepInDependency(Hub.Guid, "1.0.0")] // OnSave / OnLoad / OnNewGame
     public sealed class Plugin : BasePlugin
     {
-        public const string PluginGuid = "com.local.binders";
+        public const string PluginGuid = "FlanderDev.SFM.Binders";
         public const string PluginName = "Binders";
-        public const string PluginVersion = "0.1.1";
+        public const string PluginVersion = "1.0.0";
         private const string ModelResource = "Binders.assets.binders.bnd";
         internal const string TextureResource = "Binders.assets.binders_color.png";
 
