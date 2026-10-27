@@ -9,10 +9,10 @@
     <RootNamespace>Binders.Tests</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\mods\Binders\Logic\**\*.cs" Link="Logic\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\..\src\SfmKit\Pure\**\*.cs" Link="SfmKit.Pure\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\..\src\Binders\Logic\**\*.cs" Link="Logic\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\..\lib\SfmKit\Pure\**\*.cs" Link="SfmKit.Pure\%(RecursiveDir)%(Filename)%(Extension)" />
     <!-- The exported model (tests are skipped when it has not been exported yet). -->
-    <None Include="..\..\mods\Binders\assets\binders.bnd" Link="binders.bnd" CopyToOutputDirectory="PreserveNewest"
-          Condition="Exists('..\..\mods\Binders\assets\binders.bnd')" />
+    <None Include="..\..\src\Binders\assets\binders.bnd" Link="binders.bnd" CopyToOutputDirectory="PreserveNewest"
+          Condition="Exists('..\..\src\Binders\assets\binders.bnd')" />
   </ItemGroup>
 </Project>
