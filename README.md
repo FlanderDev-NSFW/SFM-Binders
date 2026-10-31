@@ -3,6 +3,8 @@
 Arm and leg binders for **Secret Flasher Manaka**: leather sleeves hold her forearms folded against her upper arms and her
 shins against her thighs, so she can only crawl, on her elbows and knees.
 
+Models: from ["Prop Pack 4"](https://smutba.se/project/105f65ac-0471-4474-8e87-0af32876b26f/) by biancaboo1 ([CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)).
+
 ## Requirements
 - Secret Flasher Manaka (tested with v1.1.3)
 - BepInEx 6 for IL2CPP (tested with build 738)
@@ -33,7 +35,7 @@ The sleeves are shaped to her body.
 - After a big change of pose the sleeves can look loose for a moment.
 - Actions that stand her up (interactions, events) play out folded.
 
-Single-player / offline only. Code: MIT licence (`LICENSE.txt`). Models: from "Prop Pack 4" by biancaboo1, CC BY-NC-ND 4.0 (smutba.se; details in `LICENSE-MODELS.txt`).
+Single-player / offline only. Code: MIT licence (`LICENSE.txt`). Models: from ["Prop Pack 4"](https://smutba.se/project/105f65ac-0471-4474-8e87-0af32876b26f/) by biancaboo1, CC BY-NC-ND 4.0 (smutba.se; details in `LICENSE-MODELS.txt`).
 
 ## Building from source
 - .NET SDK 8, and a copy of the game with BepInEx 6 IL2CPP started once: copy `Directory.Build.local.props.example` to
