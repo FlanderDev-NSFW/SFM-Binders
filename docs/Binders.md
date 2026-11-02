@@ -123,6 +123,7 @@ are fitted to, drawn over her (white where it lies outside her drawn body; hide 
     between two rings cut it) gone with rings that hold the limb up to their neighbours. Six sides standing and crawling: no skin
     through the walls; at most 2.1 ms per frame.
   - not run in game: the save round trip (it would write the player's slot; the hooks are Yoke's / the template's, L3 there).
+- L3 1.1.0 (2026-11-02, with RestraintHub 1.1.0 and the test missions - details in RestraintHub's `docs/RestraintHub.md`, L3 1.1.0): put on from a mission's thread and taken off when the thread ended (`TakeOff` = `Release`); afterwards she stays crouched, as after struggling free.
 
 ## Known limits
 

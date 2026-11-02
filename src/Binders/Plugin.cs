@@ -15,12 +15,12 @@ namespace Binders
     /// shins against her thighs, in leather sleeves, and keeps her crawling on elbows and knees until she struggles free (F).
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
-    [BepInDependency(Hub.Guid, "1.0.0")] // OnSave / OnLoad / OnNewGame
+    [BepInDependency(Hub.Guid, "^1.1.0")] // OnSave / OnLoad / OnNewGame; PutOn / TakeOff (missions)
     public sealed class Plugin : BasePlugin
     {
         public const string PluginGuid = "FlanderDev.SFM.Binders";
         public const string PluginName = "Binders";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.1.0";
         private const string ModelResource = "Binders.assets.binders.bnd";
         internal const string TextureResource = "Binders.assets.binders_color.png";
 
@@ -86,6 +86,8 @@ namespace Binders
                 // Crawling only (the controller keeps her crouched), nothing that needs her hands, no pose skills, no peeing.
                 Blocks = () => RestraintHub.Blocks.Running | RestraintHub.Blocks.HandActions | RestraintHub.Blocks.PoseSkills | RestraintHub.Blocks.Pee,
                 OnChosen = () => { var c = BinderController.Instance; if (c != null) c.OnRingChosen(); },
+                PutOn = () => BinderController.Instance == null ? "not ready" : BinderController.Instance.PutOn(),
+                TakeOff = () => BinderController.Release(),
                 Attempt = () => BinderController.Instance == null ? 0f : BinderController.Instance.Machine.Attempt,
                 OnInput = i => { var c = BinderController.Instance; if (c != null) c.OnInput(i); },
             };

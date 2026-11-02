@@ -82,9 +82,18 @@ namespace Binders
         [HideFromIl2Cpp]
         internal void OnRingChosen()
         {
+            string why = PutOn();
+            if (why != null) GameUi.Message("Can't put the binders on: " + why);
+        }
+
+        /// <summary>Put them on (the ring entry, or a mission through RestraintHub): null when they are closing, else why not.</summary>
+        [HideFromIl2Cpp]
+        internal string PutOn()
+        {
             string result = LockHere();
-            if (Machine.Worn) GameUi.PlaySe(InGameSoundManager.SeType.CommonEquip);
-            else GameUi.Message("Can't put the binders on: " + (result.StartsWith("refused: ") ? result.Substring(9) : result));
+            if (!Machine.Worn) return result.StartsWith("refused: ") ? result.Substring(9) : result;
+            GameUi.PlaySe(InGameSoundManager.SeType.CommonEquip);
+            return null;
         }
 
         /// <summary>Put the binders on (the ring entry; also a bridge diagnostic, which skips the hub's conflict check).</summary>
