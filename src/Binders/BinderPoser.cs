@@ -100,7 +100,10 @@ namespace Binders
             for (int i = 0; i < Posed.Length; i++)
             {
                 var t = anim.GetBoneTransform(Posed[i]);
-                if (t != null) Offset[i] = t.localPosition - Animated[i];
+                if (t == null) continue;
+                Vector3 o = t.localPosition - Animated[i];
+                if (!CrawlPose.Finite(N(o))) { _haveOffset = false; return; } // never keep a broken offset (it is added every frame)
+                Offset[i] = o;
             }
             _haveOffset = true;
         }
@@ -126,11 +129,27 @@ namespace Binders
                 var b = Sleeves[i];
                 var part = model.Get(b.Kind, b.Side);
                 float along = b.Kind == BinderKind.Arm ? armLength : legLength;
-                s.Scale[i] = along * Vector3.Distance(B(anim, b.Upper).position, B(anim, b.Joint).position) / part.Length;
+                float scale = along * Vector3.Distance(B(anim, b.Upper).position, B(anim, b.Joint).position) / part.Length;
+                if (!(scale > 0f) || !CrawlPose.Finite(scale)) continue; // bones not laid out (yet): keep the last good size
+                s.Scale[i] = scale;
+                if (s.Fitted[i] && (!CrawlPose.Finite(s.Cup[i]) || !CrawlPose.Finite(s.Half[i]))) s.Fitted[i] = false;
                 if (s.Fitted[i]) continue;
                 s.Cup[i] = (b.Kind == BinderKind.Arm ? ArmCup : LegCup) * s.Scale[i];
                 s.Half[i] = part.HalfWidth() * s.Scale[i];
             }
+        }
+
+        /// <summary>Whether <see cref="Apply"/> and <see cref="Place"/> can work now (<see cref="CrawlPose.Usable"/>).</summary>
+        public static bool Usable(Animator anim, Sizes s)
+        {
+            var points = new (NVector3, NVector3, NVector3)[Sleeves.Length];
+            for (int i = 0; i < Sleeves.Length; i++)
+            {
+                Transform u = B(anim, Sleeves[i].Upper), j = B(anim, Sleeves[i].Joint), e = B(anim, Sleeves[i].End);
+                if (u == null || j == null || e == null) return false;
+                points[i] = (N(u.position), N(j.position), N(e.position));
+            }
+            return CrawlPose.Usable(s.Scale, s.Cup, s.Half, points);
         }
 
         /// <summary>A sleeve's axis and fold direction on the bones now (see <see cref="CrawlPose.Sleeve"/>).</summary>

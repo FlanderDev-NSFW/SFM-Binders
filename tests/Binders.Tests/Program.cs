@@ -118,6 +118,15 @@ namespace Binders.Tests
 
         private static void PoseTests()
         {
+            // Usable: the pose only from laid-out bones and finite sizes (a NaN once made her vanish after loading a save).
+            var limbs = new (Vector3, Vector3, Vector3)[] { (new Vector3(0, 1, 0), new Vector3(0, 0.7f, 0), new Vector3(0, 0.45f, 0)) };
+            float[] one = { 1f }, cup = { 0.04f }, half = { 0.05f };
+            Check(CrawlPose.Usable(one, cup, half, limbs), "usable: laid-out limb, finite sizes");
+            Check(!CrawlPose.Usable(new[] { float.NaN }, cup, half, limbs), "usable: NaN scale refused");
+            Check(!CrawlPose.Usable(new[] { 0f }, cup, half, limbs), "usable: zero scale (not measured yet) refused");
+            Check(!CrawlPose.Usable(one, new[] { float.PositiveInfinity }, half, limbs), "usable: infinite cup refused");
+            Check(!CrawlPose.Usable(one, cup, half, new[] { (Vector3.Zero, Vector3.Zero, Vector3.Zero) }), "usable: bones on top of each other (right after a load) refused");
+            Check(!CrawlPose.Usable(one, cup, half, new[] { (new Vector3(float.NaN, 0, 0), new Vector3(0, 0.7f, 0), new Vector3(0, 0.45f, 0)) }), "usable: NaN bone refused");
             Vector3 up = Vector3.UnitY, fwd = Vector3.UnitZ, floor = Vector3.Zero;
             // The game's crawl [observed 2026-10-25]: spine joint 42 cm up, shoulders 33 cm ahead of it at 46 cm.
             Vector3 pivot = new Vector3(0, 0.42f, -0.38f), shoulders = new Vector3(0, 0.46f, -0.09f);

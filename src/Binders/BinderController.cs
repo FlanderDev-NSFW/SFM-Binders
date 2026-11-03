@@ -201,6 +201,7 @@ namespace Binders
 
         private Camera.CameraCallback _preCull;
         private int _placedFrame = -1;
+        private int _skipped; // LateUpdates without a pose (bones not laid out yet); logged once the pose starts
 
         private void Start()
         {
@@ -287,7 +288,9 @@ namespace Binders
                     Plugin.Logger.LogInfo("[SFM-ACCEPT] fit: " + _fitter.LabelStatus);
                 }
                 _probeAnim = Snapshot();
-                if ((Plugin.DebugDisable.Value & 1) == 0)
+                bool usable = BinderPoser.Usable(anim, _sizes);
+                if (!usable) _skipped++;
+                if (usable && (Plugin.DebugDisable.Value & 1) == 0)
                 {
                     BinderPoser.UseDrawnLengths(anim);
                     BinderPoser.Apply(anim, player.transform, _sizes, Plugin.ArmFoldGap.Value, Plugin.LegFoldGap.Value, Plugin.HandBend.Value);
@@ -325,6 +328,13 @@ namespace Binders
                 if (anim == null) return;
                 BinderPoser.RecordDrawn(anim);
                 BinderPoser.Scale(anim, Model, _sizes, Plugin.ArmLength.Value, Plugin.LegLength.Value); // from the drawn bones (her body settings applied)
+                if (!BinderPoser.Usable(anim, _sizes)) { _rig.SetVisible(false); return; } // not laid out yet (after a load): no fit, sleeves hidden
+                if (_skipped > 0)
+                {
+                    Plugin.Logger.LogInfo("[SFM-ACCEPT] pose: started after " + _skipped + " frames without usable bones");
+                    _skipped = 0;
+                    _nextFit = Time.time + FitInterval; // let the pose settle first (the first fit after a load was 20 cm wide)
+                }
                 FitIfDue(anim, player.transform);
                 BinderPoser.Place(anim, player.transform, _rig, _sizes);
                 _probeDrawn = Snapshot();

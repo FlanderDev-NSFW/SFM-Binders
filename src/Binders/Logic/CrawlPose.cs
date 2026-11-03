@@ -12,6 +12,32 @@ namespace Binders.Logic
     /// </summary>
     public static class CrawlPose
     {
+        /// <summary>Shortest segment the pose works with (m): right after a load the first frames come before the animator has laid
+        /// out her bones, and they lie on top of each other [observed 2026-11-02].</summary>
+        public const float MinSegment = 0.02f;
+
+        public static bool Finite(float v) => !float.IsNaN(v) && !float.IsInfinity(v);
+
+        public static bool Finite(Vector3 v) => Finite(v.X) && Finite(v.Y) && Finite(v.Z);
+
+        /// <summary>
+        /// Whether the crawl can be solved for these sleeve sizes and limbs (<paramref name="points"/>: per sleeve its upper end,
+        /// joint and folded end). A pose from anything else writes NaN into her bones: she disappears, and because the sleeves are
+        /// sized from the bones as drawn the NaN came back every frame - after loading a save with the binders on she stayed
+        /// invisible [observed 2026-11-02].
+        /// </summary>
+        public static bool Usable(float[] scale, float[] cup, float[] half, (Vector3 Upper, Vector3 Joint, Vector3 End)[] points)
+        {
+            for (int i = 0; i < scale.Length; i++)
+                if (!(scale[i] > 0f) || !Finite(scale[i]) || !Finite(cup[i]) || !Finite(half[i])) return false;
+            foreach (var (upper, joint, end) in points)
+            {
+                if (!Finite(upper) || !Finite(joint) || !Finite(end)) return false;
+                if (Vector3.Distance(upper, joint) < MinSegment || Vector3.Distance(joint, end) < MinSegment) return false;
+            }
+            return true;
+        }
+
         /// <summary>
         /// Where the shoulders' midpoint has to go: <paramref name="shoulders"/> turned about <paramref name="pivot"/> (the spine
         /// joint) in the vertical plane so it is <paramref name="height"/> over the floor (<paramref name="floor"/>, along
