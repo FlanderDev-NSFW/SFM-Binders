@@ -23,7 +23,6 @@ namespace Binders
     public sealed class BinderController : MonoBehaviour
     {
         /// <summary>RingItemType value of the entry (registry in docs/mods/RestraintHub.md).</summary>
-        public const int RingItemValue = 9400;
 
         internal static BinderController Instance;
         internal static BinderModel Model;
@@ -78,15 +77,8 @@ namespace Binders
 
         // --- putting them on / off -----------------------------------------------------------------------------------------------
 
-        /// <summary>The ring entry or a number key, when the binders are off and nothing worn holds her arms or legs (the hub checked).</summary>
-        [HideFromIl2Cpp]
-        internal void OnRingChosen()
-        {
-            string why = PutOn();
-            if (why != null) GameUi.Message("Can't put the binders on: " + why);
-        }
 
-        /// <summary>Put them on (the ring entry, or a mission through RestraintHub): null when they are closing, else why not.</summary>
+        /// <summary>Put them on (the hub's panel, or a mission): null when they are closing, else why not.</summary>
         [HideFromIl2Cpp]
         internal string PutOn()
         {
@@ -96,7 +88,7 @@ namespace Binders
             return null;
         }
 
-        /// <summary>Put the binders on (the ring entry; also a bridge diagnostic, which skips the hub's conflict check).</summary>
+        /// <summary>Put the binders on (the hub's panel; also a bridge diagnostic, which skips the hub's conflict check).</summary>
         public static string LockHere()
         {
             try

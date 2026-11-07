@@ -11,12 +11,11 @@ Arm and leg binders for SecretFlasherManaka (BepInEx 6 IL2CPP): red leather slee
 upper arms and her shins folded against her thighs, so she can only crawl - on her elbows and knees. One restraint for all four
 limbs. Single-player/offline only.
 
-**Needs RestraintHub** (1.0.0+, a separate download): ring entry, number shortcuts, the list of worn restraints, F routing,
-input blocking and conflicts are the hub's (`docs/mods/RestraintHub.md`).
+**Needs RestraintHub** (2.0.0+, a separate download): the panel row, the list of worn restraints, F routing, input blocking and
+conflicts are the hub's (RestraintHub's `docs/RestraintHub.md`).
 
-**Status 0.1.0:** usable, L3 (see Verification). Pick **Arm & Leg Binders** in the common ring (hold 1; the restraint page after
-the game's, page 5, first slot) or put it on a number key; hold **F** to struggle free (`Unlock.SuccessChance`, default: the
-first attempt).
+**Status 2.0.0:** usable, L3 (see Verification). Open the hub's panel (`U`) and click **Arm & Leg Binders** (Wearables); hold
+**F** to struggle free (`Unlock.SuccessChance`, default: the first attempt).
 
 - **Crawling only:** she is put into the game's crawl (the crouch state, C) and kept there - C does not stand her up while the
   binders are on; after an action that ends the crawl she goes down again. Crawling is slower (`Crawl.SpeedFactor` 0.6 times the
@@ -43,7 +42,7 @@ first attempt).
   thickness stay as modelled. A sleeve covers its last six fits (3 s), so the crawl's steps do not push skin through it; towards
   the opening a ring never narrows (the limb meets the body there). The elbow / knee rests on the cup's floor. A fit is spread
   over five frames (at most ~3 ms in one). Textured with the model's colour map on the game's toon material.
-- **Saved** with the game (lock, unlock chance, number shortcuts; three keys in the slot file); a load with the binders on puts
+- **Saved** with the game (lock and unlock chance in the slot file; the shortcut key of 1.x is ignored); a load with the binders on puts
   them back.
 
 ## Model
@@ -66,7 +65,7 @@ folded segment, winding flipped for the handedness) and the PNG decoded with `Im
 
 | Key | Default | Meaning |
 |---|---|---|
-| General.RingLabel | Arm & Leg Binders | ring menu / list text |
+| General.RingLabel | Arm & Leg Binders | panel / list text (the key name is kept from 1.x) |
 | Unlock.AttemptSeconds | 4.5 | seconds of F per attempt |
 | Unlock.SuccessChance | 1 | chance per full attempt (1 = first try; failures add 0.02) |
 | Crawl.SpeedFactor | 0.6 | her crawling speed in the binders, times the game's (applies live) |
@@ -125,6 +124,7 @@ are fitted to, drawn over her (white where it lies outside her drawn body; hide 
   - not run in game: the save round trip (it would write the player's slot; the hooks are Yoke's / the template's, L3 there).
 - L3 1.1.0 (2026-11-02, with RestraintHub 1.1.0 and the test missions - details in RestraintHub's `docs/RestraintHub.md`, L3 1.1.0): put on from a mission's thread and taken off when the thread ended (`TakeOff` = `Release`); afterwards she stays crouched, as after struggling free.
 - L3 1.1.0 save / load (2026-11-02, user question): binders on at home, saved, game restarted, loaded -> she was **invisible** (only the face preview showed her), Status "knees apart +NaN m ... sleeve scale arm NaN", probe: animated bones fine, posed and drawn all NaN. Cause: right after a load the first frames come before the animator has laid out her bones (on top of each other); the pose normalised a zero vector, and the NaN latched - the sleeve sizes are measured from the bones as drawn and kept, the drawn-length offset is added every frame. A fresh put-on never saw it (the animator runs; 0.6 s closing). Fix: `CrawlPose.Usable` (finite sizes, limb segments of 2 cm and more) gates the pose, the sleeve placing and the fit; `Scale` and `RecordDrawn` never store non-finite values; the first fit waits 0.5 s after the pose starts (the first one after a load measured the arm opening 20 cm wide). After the fix, the same load: "pose: started after 2 frames without usable bones", Status as after a fresh put-on (knees apart 5.2 cm, hips down 7 cm, sleeve scale 1.137 / 1.063), first fit as fresh (arm cup 4.4, opening 4.5 x 6.1 cm), visible crawling in the sleeves (screenshot). Negative control: the 1.1.0 build before the fix, same save -> NaN and invisible. Fresh put-on and struggling free unchanged. Yoke over the same save / load: fine, no NaN.
+- L3 2.0.0 (2026-11-07, RestraintHub 2.0.0): ported to the hub's 2.0 API (`Wearable`; no ring entry, number keys or shortcut save key; the hub shows `PutOn`'s reason). In game: listed in the panel (`U`), refused while the yoke was on (arms), the reason in the message bar.
 
 ## Known limits
 

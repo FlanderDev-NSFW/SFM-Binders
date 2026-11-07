@@ -11,22 +11,22 @@ using RestraintHub;
 namespace Binders
 {
     /// <summary>
-    /// Arm and leg binders: one restraint (ring entry via RestraintHub) that folds her forearms against her upper arms and her
+    /// Arm and leg binders: one wearable (in RestraintHub's panel) that folds her forearms against her upper arms and her
     /// shins against her thighs, in leather sleeves, and keeps her crawling on elbows and knees until she struggles free (F).
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
-    [BepInDependency(Hub.Guid, "^1.1.0")] // OnSave / OnLoad / OnNewGame; PutOn / TakeOff (missions)
+    [BepInDependency(Hub.Guid, "^2.0.0")] // RestraintHub 2: the panel (U), PutOn / TakeOff, mission settings
     public sealed class Plugin : BasePlugin
     {
         public const string PluginGuid = "FlanderDev.SFM.Binders";
         public const string PluginName = "Binders";
-        public const string PluginVersion = "1.1.0";
+        public const string PluginVersion = "2.0.0";
         private const string ModelResource = "Binders.assets.binders.bnd";
         internal const string TextureResource = "Binders.assets.binders_color.png";
 
         internal static ManualLogSource Logger;
-        /// <summary>The binders' registration with RestraintHub (ring entry, selection, F).</summary>
-        internal static Restraint Entry;
+        /// <summary>The binders' registration with RestraintHub (panel row, selection, F).</summary>
+        internal static Wearable Entry;
         public static ConfigEntry<string> RingLabel;
         public static ConfigEntry<float> AttemptSeconds, SuccessChance, CrawlSpeed, ArmFoldGap, LegFoldGap, HandBend, ArmLength, LegLength, ClearanceCm;
         public static ConfigEntry<int> DebugDisable;
@@ -34,7 +34,7 @@ namespace Binders
         public override void Load()
         {
             Logger = Log;
-            RingLabel = Config.Bind("General", "RingLabel", "Arm & Leg Binders", "Name of the ring menu entry.");
+            RingLabel = Config.Bind("General", "RingLabel", "Arm & Leg Binders", "Name in the restraint panel.");
             AttemptSeconds = Config.Bind("Unlock", "AttemptSeconds", 4.5f, new ConfigDescription(
                 "Seconds of holding the interact key (F) per attempt to struggle free.", new AcceptableValueRange<float>(0.5f, 30f)));
             SuccessChance = Config.Bind("Unlock", "SuccessChance", 1f, new ConfigDescription(
@@ -72,12 +72,10 @@ namespace Binders
             }
             ClassInjector.RegisterTypeInIl2Cpp<BinderController>();
             AddComponent<BinderController>();
-            Entry = new Restraint
+            Entry = new Wearable
             {
                 Id = "Binders",
-                RingValue = BinderController.RingItemValue,
                 Label = () => RingLabel.Value,
-                ShortcutSaveKey = Patches.SaveKeyShortcuts,
                 OnSave = Patches.Save,
                 OnLoad = Patches.Load,
                 OnNewGame = () => BinderController.Instance?.OnNewGame(),
@@ -85,7 +83,6 @@ namespace Binders
                 IsWorn = () => BinderController.Instance != null && BinderController.Instance.Machine.Worn,
                 // Crawling only (the controller keeps her crouched), nothing that needs her hands, no pose skills, no peeing.
                 Blocks = () => RestraintHub.Blocks.Running | RestraintHub.Blocks.HandActions | RestraintHub.Blocks.PoseSkills | RestraintHub.Blocks.Pee,
-                OnChosen = () => { var c = BinderController.Instance; if (c != null) c.OnRingChosen(); },
                 PutOn = () => BinderController.Instance == null ? "not ready" : BinderController.Instance.PutOn(),
                 TakeOff = () => BinderController.Release(),
                 Attempt = () => BinderController.Instance == null ? 0f : BinderController.Instance.Machine.Attempt,

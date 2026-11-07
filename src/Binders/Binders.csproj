@@ -4,7 +4,7 @@
   <PropertyGroup>
     <AssemblyName>Binders</AssemblyName>
     <RootNamespace>Binders</RootNamespace>
-    <Version>1.1.0</Version>
+    <Version>2.0.0</Version>
     <Description>Binders - arm and leg binders that make her crawl on elbows and knees (SecretFlasherManaka, BepInEx IL2CPP)</Description>
     <!-- Compiles against RestraintHub (build/SfmMod.targets); players install it separately. -->
     <SfmUsesRestraintHub>true</SfmUsesRestraintHub>

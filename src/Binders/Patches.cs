@@ -8,15 +8,14 @@ namespace Binders
 {
     /// <summary>
     /// The binders' save data: whether they are on and the struggle chance, as two extra keys in the game's save slot (ignored
-    /// by the game without the mod); the hub saves the number shortcuts. RestraintHub calls it and catches exceptions.
+    /// by the game without the mod). RestraintHub calls it and catches exceptions.
     /// </summary>
     internal static class Patches
     {
         public const string SaveKeyLocked = "Binders.Locked";
         public const string SaveKeyChance = "Binders.Chance";
-        public const string SaveKeyShortcuts = "Binders.Shortcuts"; // written by the hub
 
-        // Called by RestraintHub (Restraint.OnSave / OnLoad) right after the game wrote / read a save slot (never the system file).
+        // Called by RestraintHub (HubItem.OnSave / OnLoad) right after the game wrote / read a save slot (never the system file).
         internal static void Save(SaveSlot slot)
         {
             try
